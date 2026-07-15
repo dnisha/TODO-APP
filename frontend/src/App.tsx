@@ -10,6 +10,8 @@ interface Todo {
 
 type ConnectionStatus = 'checking' | 'connected' | 'disconnected';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 export default function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ export default function App() {
   const checkConnections = async () => {
     // 1. Check API Health
     try {
-      const apiRes = await fetch('/api/v1/health');
+      const apiRes = await fetch(`${API_BASE_URL}/api/v1/health`);
       if (apiRes.ok) {
         setApiStatus('connected');
       } else {
@@ -50,7 +52,7 @@ export default function App() {
 
     // 2. Check Database connection
     try {
-      const dbRes = await fetch('/api/v1/db-test');
+      const dbRes = await fetch(`${API_BASE_URL}/api/v1/db-test`);
       if (dbRes.ok) {
         const data = await dbRes.json();
         if (data.database === 'connected') {
@@ -69,7 +71,7 @@ export default function App() {
   const fetchTodos = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/v1/todos');
+      const res = await fetch(`${API_BASE_URL}/api/v1/todos`);
       if (res.ok) {
         const data = await res.json();
         setTodos(data);
@@ -90,7 +92,7 @@ export default function App() {
     if (!title.trim()) return;
 
     try {
-      const res = await fetch('/api/v1/todos', {
+      const res = await fetch(`${API_BASE_URL}/api/v1/todos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +120,7 @@ export default function App() {
 
   const handleToggleComplete = async (todo: Todo) => {
     try {
-      const res = await fetch(`/api/v1/todos/${todo.id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/todos/${todo.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +143,7 @@ export default function App() {
     if (!confirm('Are you sure you want to delete this TODO?')) return;
     
     try {
-      const res = await fetch(`/api/v1/todos/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/v1/todos/${id}`, {
         method: 'DELETE',
       });
 
